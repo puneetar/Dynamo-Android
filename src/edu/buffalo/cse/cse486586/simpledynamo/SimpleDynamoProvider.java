@@ -48,9 +48,9 @@ public class SimpleDynamoProvider extends ContentProvider {
 	public boolean onCreate() {
 		getContext().deleteDatabase(Database.DATABASE_NAME);
 
-		System.out.println("Content provider is called");
+		//System.out.println("Content provider is called");
 		context=getContext();
-		System.out.println("in onCreate : going to create database");
+		//System.out.println("in onCreate : going to create database");
 		data_base = new Database(context);
 		data_base.getReadableDatabase();
 
@@ -70,8 +70,8 @@ public class SimpleDynamoProvider extends ContentProvider {
 			HASH_5558=genHash("5558");
 		} catch (NoSuchAlgorithmException e1) {
 			// TODO Auto-generated catch block
-			Log.v("ERROR", "In Generating HASH");
-			e1.printStackTrace();
+			//Log.v("ERROR", "In Generating HASH");
+		//	e1.printStackTrace();
 		}
 
 		try{
@@ -232,10 +232,10 @@ public class SimpleDynamoProvider extends ContentProvider {
 				socket.close();
 				return true;
 			} catch (Exception e) {
-				Log.v("ERROR", "Exception in getting ACK from : "+port);
+			//	Log.v("ERROR", "Exception in getting ACK from : "+port);
 				port=getSuccPort(getTele(port));
-				Log.v("DEBUG", "Now sending to : "+port);
-				e.printStackTrace();
+			//	Log.v("DEBUG", "Now sending to : "+port);
+			//	e.printStackTrace();
 				//return false;
 			}
 		}
@@ -255,10 +255,10 @@ public class SimpleDynamoProvider extends ContentProvider {
 				socket.close();
 				return ret;
 			} catch (Exception e) {
-				Log.v("ERROR", "Exception in getting GET_ACK from : "+port);
+				//Log.v("ERROR", "Exception in getting GET_ACK from : "+port);
 				port=getSuccPort(getTele(port));
-				Log.v("DEBUG", "Now sending to GET: "+port);
-				e.printStackTrace();
+//				Log.v("DEBUG", "Now sending to GET: "+port);
+//				e.printStackTrace();
 				//return false;
 			}
 		}

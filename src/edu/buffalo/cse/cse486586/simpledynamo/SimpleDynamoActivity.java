@@ -33,7 +33,7 @@ public class SimpleDynamoActivity extends Activity {
 								
 								for(int key=0;key<20;key++){
 									String sKey=String.valueOf(key);
-									Log.v("SEND", "sending : "+sKey+ " to : "+SimpleDynamoProvider.getPortToSend(sKey));
+									//Log.v("SEND", "sending : "+sKey+ " to : "+SimpleDynamoProvider.getPortToSend(sKey));
 									SimpleDynamoProvider.sendMessageAndACK(SimpleDynamoProvider.getPortToSend(sKey), Message.getMsgInsert(sKey, "Put1"+sKey));
 									try {
 										Thread.currentThread().sleep(1000);
@@ -42,12 +42,15 @@ public class SimpleDynamoActivity extends Activity {
 										e.printStackTrace();
 									}
 								}
+								publishProgress("** PUT 1 Complete **\n");
 								return null;
 							}
 
 							@Override
 							protected void onProgressUpdate(String... strings ){
 								super.onProgressUpdate(strings[0]);
+								TextView tv1 = (TextView) findViewById(R.id.textView1);
+								tv1.append(strings[0]);
 							}
 						}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 					}
@@ -63,7 +66,7 @@ public class SimpleDynamoActivity extends Activity {
 							protected Void doInBackground(Void... params) {
 								for(int key=0;key<20;key++){
 									String sKey=String.valueOf(key);
-									Log.v("SEND", "sending : "+sKey+ " to : "+SimpleDynamoProvider.getPortToSend(sKey));
+									//Log.v("SEND", "sending : "+sKey+ " to : "+SimpleDynamoProvider.getPortToSend(sKey));
 									SimpleDynamoProvider.sendMessageAndACK(SimpleDynamoProvider.getPortToSend(sKey), Message.getMsgInsert(sKey, "Put2"+sKey));
 									try {
 										Thread.currentThread().sleep(1000);
@@ -72,12 +75,15 @@ public class SimpleDynamoActivity extends Activity {
 										e.printStackTrace();
 									}
 								}
+								publishProgress("** PUT 2 Complete **\n");
 								return null;
 							}
 
 							@Override
 							protected void onProgressUpdate(String... strings ){
 								super.onProgressUpdate(strings[0]);
+								TextView tv1 = (TextView) findViewById(R.id.textView1);
+								tv1.append(strings[0]);
 							}
 						}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 					}
@@ -93,7 +99,7 @@ public class SimpleDynamoActivity extends Activity {
 							protected Void doInBackground(Void... params) {
 								for(int key=0;key<20;key++){
 									String sKey=String.valueOf(key);
-									Log.v("SEND", "sending : "+sKey+ " to : "+SimpleDynamoProvider.getPortToSend(sKey));
+								//	Log.v("SEND", "sending : "+sKey+ " to : "+SimpleDynamoProvider.getPortToSend(sKey));
 									SimpleDynamoProvider.sendMessageAndACK(SimpleDynamoProvider.getPortToSend(sKey), Message.getMsgInsert(sKey, "Put3"+sKey));
 									try {
 										Thread.currentThread().sleep(1000);
@@ -102,12 +108,15 @@ public class SimpleDynamoActivity extends Activity {
 										e.printStackTrace();
 									}
 								}
+								publishProgress("** PUT 3 Complete **\n");
 								return null;
 							}
 
 							@Override
 							protected void onProgressUpdate(String... strings ){
 								super.onProgressUpdate(strings[0]);
+								TextView tv1 = (TextView) findViewById(R.id.textView1);
+								tv1.append(strings[0]);
 							}
 						}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 					}
@@ -134,6 +143,7 @@ public class SimpleDynamoActivity extends Activity {
 									//	System.out.println("PRINTING: "+"< "+key+" : "+value+" >");
 									publishProgress("< "+key+" : "+value+" >\n");	
 								}
+								publishProgress("** L DUMP Complete **\n");
 								return null;
 							}
 
@@ -156,7 +166,7 @@ public class SimpleDynamoActivity extends Activity {
 							protected Void doInBackground(Void... params) {
 								for(int key=0;key<20;key++){
 									String sKey=String.valueOf(key);
-									Log.v("QUERY", "querying : "+sKey+ " to : "+SimpleDynamoProvider.getPortToSend(sKey));
+								//	Log.v("QUERY", "querying : "+sKey+ " to : "+SimpleDynamoProvider.getPortToSend(sKey));
 									Message m=SimpleDynamoProvider.sendGETMessageAndACK(SimpleDynamoProvider.getPortToSend(sKey), Message.getMsgQuery(sKey));
 									publishProgress("< "+m.getKey()+" : "+m.getValue()+" >\n");
 									try {
@@ -166,6 +176,7 @@ public class SimpleDynamoActivity extends Activity {
 										e.printStackTrace();
 									}
 								}
+								publishProgress("** GET Complete **\n");
 								return null;
 							}
 

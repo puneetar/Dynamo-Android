@@ -28,25 +28,23 @@ public class Server extends AsyncTask<ServerSocket, String, Void> {
 		ServerSocket serverSocket = sockets[0];
 		Socket socket=null;
 		try{
-			Log.v("STARTING SERVER", "123");
+		//	Log.v("STARTING SERVER", "123");
 			while(true){
-
 				socket = serverSocket.accept();
-				Node n=new Node(socket, new ObjectOutputStream(socket.getOutputStream()), new ObjectInputStream(socket.getInputStream()));
-				new ServerImpl().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,n);
-
+				//Node n=new Node(socket, new ObjectOutputStream(socket.getOutputStream()), new ObjectInputStream(socket.getInputStream()));
+				new ServerImpl().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,socket);
 			}
 		}
 		catch(IOException e){
-			Log.v("ERROR", "In server creation");
-			e.printStackTrace();
+//			Log.v("ERROR", "In server creation");
+//			e.printStackTrace();
 		}
 		return null;
 	}
 }
 
 
-class ServerImpl extends AsyncTask<Node, String, Void> {
+class ServerImpl extends AsyncTask<Socket, String, Void> {
 
 	private Socket socket;
 	private ObjectOutputStream oostream;
@@ -55,57 +53,88 @@ class ServerImpl extends AsyncTask<Node, String, Void> {
 	static int count;
 
 	@Override
-	protected Void doInBackground(Node... node) {
-		socket=node[0].getSocket();
-		oostream=node[0].getOostream();
-		oistream=node[0].getOistream();
+	protected Void doInBackground(Socket... sock) {
+		this.socket=sock[0];
+		try {
+			oostream=new ObjectOutputStream(socket.getOutputStream());
+			oistream=new ObjectInputStream(socket.getInputStream());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			//e1.printStackTrace();
+		}
+		
 
 		try {
 			message = (Message) oistream.readObject();
-			if (message.getType() == Message.MSG_INSERT) {
-				System.out.println("In insert Message");
+			switch(message.getType())
+			{
+			case Message.MSG_INSERT :
+			case Message.MSG_FORCE_INSERT:
+			case Message.MSG_REPLICA:
+			//	System.out.println("In insert Message");
 				insert(message);
 				oostream.writeObject(Message.getMsgAck());	
 				socket.close();
-
-			} else if (message.getType() == Message.MSG_FORCE_INSERT) {
-				System.out.println("In force_insert message");
-				insert(message);
-				oostream.writeObject(Message.getMsgAck());
-				socket.close();
-
-			}  else if (message.getType() == Message.MSG_REPLICA) {
-				System.out.println("In replica message");
-				insert(message);
-				oostream.writeObject(Message.getMsgAck());
-				socket.close();
-
-			}else if (message.getType() == Message.MSG_L_DUMP) {
-				//	System.out.println("In insert message");
-				socket.close();
-
-			} else if (message.getType() == Message.MSG_QUERY) {
-				System.out.println("In query message");
+				break;
+			case Message.MSG_QUERY:
+			//	System.out.println("In query message");
 				query(message);
 				socket.close();
-
-			} else if (message.getType() == Message.MSG_QUERY_REPLY) {
-				System.out.println("In Query_Reply message");
-				socket.close();
-
-			} else if (message.getType() == Message.MSG_ACK) {
-				System.out.println("In ACK message");
-				socket.close();
-
-			} else if (message.getType() == Message.MSG_RECOVERED) {
-				System.out.println("In Recovered message");
+				break;
+			case Message.MSG_RECOVERED:
+			//	System.out.println("In Recovered message");
 				recovered();
 				socket.close();
-
-			} else {
-				System.out.println(" message type cannot be found ***");
+				break;
+			default:
 				socket.close();
+				break;
+
 			}
+			//			if (message.getType() == Message.MSG_INSERT) {
+			//				System.out.println("In insert Message");
+			//				insert(message);
+			//				oostream.writeObject(Message.getMsgAck());	
+			//				socket.close();
+			//
+			//			} else if (message.getType() == Message.MSG_FORCE_INSERT) {
+			//				System.out.println("In force_insert message");
+			//				insert(message);
+			//				oostream.writeObject(Message.getMsgAck());
+			//				socket.close();
+			//
+			//			}  else if (message.getType() == Message.MSG_REPLICA) {
+			//				System.out.println("In replica message");
+			//				insert(message);
+			//				oostream.writeObject(Message.getMsgAck());
+			//				socket.close();
+			//
+			//			}else if (message.getType() == Message.MSG_L_DUMP) {
+			//				//	System.out.println("In insert message");
+			//				socket.close();
+			//
+			//			} else if (message.getType() == Message.MSG_QUERY) {
+			//				System.out.println("In query message");
+			//				query(message);
+			//				socket.close();
+			//
+			//			} else if (message.getType() == Message.MSG_QUERY_REPLY) {
+			//				System.out.println("In Query_Reply message");
+			//				socket.close();
+			//
+			//			} else if (message.getType() == Message.MSG_ACK) {
+			//				System.out.println("In ACK message");
+			//				socket.close();
+			//
+			//			} else if (message.getType() == Message.MSG_RECOVERED) {
+			//				System.out.println("In Recovered message");
+			//				recovered();
+			//				socket.close();
+			//
+			//			} else {
+			//				System.out.println(" message type cannot be found ***");
+			//				socket.close();
+			//			}
 
 		} catch (OptionalDataException e) {
 			e.printStackTrace();
@@ -164,7 +193,7 @@ class ServerImpl extends AsyncTask<Node, String, Void> {
 		ContentValues cv = new ContentValues();
 		cv.put(SimpleDynamoProvider.KEY_FIELD, message.getKey());
 		cv.put(SimpleDynamoProvider.VALUE_FIELD, message.getValue());
-		System.out.println("**in method insert ");
+		//System.out.println("**in method insert ");
 		SimpleDynamoProvider.myContentResolver.insert(SimpleDynamoProvider.myUri, cv);
 	}
 
